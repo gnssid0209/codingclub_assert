@@ -4,14 +4,44 @@
   <meta charset="UTF-8">
   <title>관리자 페이지</title>
   <style>
-    body { font-family: sans-serif; margin: 40px; }
-    input, select { margin: 5px; padding: 5px; }
-    .section { border: 1px solid #ddd; padding: 12px; margin-bottom: 16px; border-radius: 8px;}
+    body { font-family: sans-serif; margin: 20px; padding: 0; background: #f9f9f9; }
+    h2, h3 { text-align: center; }
+    .section { 
+        background: #fff; 
+        border: 1px solid #ddd; 
+        padding: 12px; 
+        margin-bottom: 16px; 
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    input, select, button { 
+        margin: 5px 0; 
+        padding: 10px; 
+        font-size: 16px; 
+        width: 100%; 
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #45a049; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 14px; }
     .status { font-weight: bold; }
     .green { color: green; }
     .red { color: red; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+
+    /* 반응형: 화면이 600px 이하일 때 */
+    @media (max-width: 600px) {
+        body { margin: 10px; }
+        h2, h3 { font-size: 18px; }
+        input, select, button { font-size: 16px; padding: 12px; }
+        th, td { font-size: 12px; padding: 6px; }
+    }
+
+    /* 버튼 여러 개 inline 대신 flex */
+    .button-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .button-group form { flex: 1; min-width: 48%; }
   </style>
 </head>
 <body>
@@ -28,37 +58,38 @@
     </p>
     <p>설정된 정답: <strong>{{ game.answer if game.answer else "설정 안됨" }}</strong></p>
 
-    <!-- 게임 상태 / 버튼 -->
-<form method="POST" style="display:inline;">
-  <input type="hidden" name="action" value="start">
-  <button type="submit">게임 시작 (배팅 허용)</button>
-</form>
+    <div class="button-group">
+      <form method="POST">
+        <input type="hidden" name="action" value="start">
+        <button type="submit">게임 시작 (배팅 허용)</button>
+      </form>
 
-<form method="POST" style="display:inline;">
-  <input type="hidden" name="action" value="stop_betting">
-  <button type="submit">배팅 종료</button>
-</form>
+      <form method="POST">
+        <input type="hidden" name="action" value="stop_betting">
+        <button type="submit">배팅 종료</button>
+      </form>
 
-<form method="POST" style="display:inline; margin-left:12px;">
-  <input type="hidden" name="action" value="set_answer">
-  <select name="answer" required>
-    <option value="">정답 선택</option>
-    <option value="A">A</option>
-    <option value="B">B</option>
-    <option value="C">C</option>
-    <option value="D">D</option>
-  </select>
-  <button type="submit">정답 설정</button>
-</form>
+      <form method="POST">
+        <input type="hidden" name="action" value="set_answer">
+        <select name="answer" required>
+          <option value="">정답 선택</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+        <button type="submit">정답 설정</button>
+      </form>
 
-<form method="POST" style="display:inline; margin-left:12px;">
-  <input type="hidden" name="action" value="settle">
-  <button type="submit">정산</button>
-</form>
-
+      <form method="POST">
+        <input type="hidden" name="action" value="settle">
+        <button type="submit">정산</button>
+      </form>
+    </div>
+  </div>
 
   <div class="section">
-    <h3>대기중인 배팅들 (현재 접수)</h3>
+    <h3>대기중인 배팅들</h3>
     {% set bets = game.get('bets', []) %}
     {% if bets %}
       <table>
@@ -94,7 +125,7 @@
   </div>
 
   <div class="section">
-    <h3>학생 등록 (등록 시 기본 100G 지급)</h3>
+    <h3>학생 등록 (기본 100G 지급)</h3>
     <form method="POST">
       <input type="hidden" name="action" value="register">
       <input name="student_id" placeholder="학번" required>
@@ -121,7 +152,7 @@
 
   <div class="section">
     <h3>학생 금액 관리</h3>
-    <p>학번을 선택하고 금액을 입력하면 해당 학생의 보유금이 즉시 변경됩니다.</p>
+    <p>학번을 선택하고 금액 입력 후 제출</p>
     <form method="POST">
       <input type="hidden" name="action" value="set_money">
       <select name="target_student_id" required>
