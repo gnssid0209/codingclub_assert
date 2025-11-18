@@ -3,7 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <title>랭킹</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { 
+        font-family: sans-serif; 
+        text-align: center; 
+        padding: 40px 10px; 
+        background: #f9f9f9; 
+    }
+    .container { 
+        display: inline-block; 
+        padding: 20px; 
+        border: 1px solid #ddd; 
+        border-radius: 12px; 
+        background: #fff; 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 90%;
+    }
+    h2 { font-size: 20px; margin-bottom: 12px; }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-bottom: 16px;
+    }
+    th, td { 
+        border: 1px solid #ddd; 
+        padding: 6px; 
+        text-align: center; 
+        font-size: 14px;
+    }
+    th { background-color: #f2f2f2; }
+    .highlight { font-weight: bold; font-size: 14px; margin-bottom: 12px; display: block; }
+
+    button { 
+        padding: 12px 20px; 
+        font-size: 16px; 
+        border: none; 
+        border-radius: 8px; 
+        background-color: #4CAF50; 
+        color: white; 
+        cursor: pointer; 
+        width: 100%;
+    }
+    button:hover { background-color: #45a049; }
+
+    /* 모바일 최적화 */
+    @media (max-width: 480px) {
+        h2 { font-size: 18px; }
+        table th, table td { font-size: 12px; padding: 4px; }
+        .highlight { font-size: 12px; }
+        button { font-size: 14px; padding: 10px; }
+        .container { padding: 16px; }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
