@@ -3,10 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <title>경마게임</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    .bet-input { width: 140px; padding: 8px; font-size: 16px; margin-top: 8px; }
-    .small { font-size: 14px; color: #666; }
+    body { 
+        font-family: sans-serif; 
+        text-align: center; 
+        padding: 20px 10px; 
+        background: #f9f9f9; 
+    }
+    .container { 
+        display: inline-block; 
+        padding: 20px; 
+        border: 1px solid #ddd; 
+        border-radius: 12px; 
+        background: #fff; 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 90%;
+    }
+    h2 { font-size: 20px; margin: 12px 0; }
+    p { font-size: 14px; margin: 6px 0; }
+    .small { font-size: 12px; color: #666; }
+
+    .bet-input { 
+        width: 100px; 
+        padding: 6px; 
+        font-size: 14px; 
+        margin-top: 8px; 
+        text-align: center;
+    }
+
+    button { 
+        padding: 10px 16px; 
+        font-size: 16px; 
+        margin: 6px 4px; 
+        border: none; 
+        border-radius: 8px; 
+        background-color: #4CAF50; 
+        color: white; 
+        cursor: pointer; 
+    }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+    a { display:block; margin:10px 0; font-size:14px; color:#333; text-decoration:none; }
+
+    @media (max-width: 480px) {
+        h2 { font-size: 18px; }
+        p, .small { font-size: 12px; }
+        .bet-input { width: 80px; font-size: 12px; }
+        button { font-size: 14px; padding: 8px 12px; }
+        .container { padding: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -27,7 +73,7 @@
     {% endif %}
 
     <!-- 선택 + 배팅 폼: 게임이 시작되었을 때만 활성화 -->
-    <form action="{{ url_for('check_answer') }}" method="post" class="choices" onsubmit="return validateBet()">
+    <form action="{{ url_for('check_answer') }}" method="post" onsubmit="return validateBet()">
       <div>
         <label for="bet">배팅금 (정수): </label>
         <input id="bet" name="bet" type="number" min="1" step="1" class="bet-input" required {% if not game_running %}disabled{% endif %}>
@@ -64,7 +110,6 @@
     }
 
     function validateBet() {
-      // 클라이언트 측 검사
       const betVal = parseInt(betInput.value);
       if (isNaN(betVal) || betVal <= 0) {
         alert("배팅 금액은 1 이상의 정수여야 합니다.");
