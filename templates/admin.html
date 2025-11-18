@@ -28,28 +28,34 @@
     </p>
     <p>설정된 정답: <strong>{{ game.answer if game.answer else "설정 안됨" }}</strong></p>
 
-    <form method="POST" style="display:inline;">
-      <input type="hidden" name="action" value="start">
-      <button type="submit">게임 시작 (베팅 허용)</button>
-    </form>
+    <!-- 게임 상태 / 버튼 -->
+<form method="POST" style="display:inline;">
+  <input type="hidden" name="action" value="start">
+  <button type="submit">게임 시작 (배팅 허용)</button>
+</form>
 
-    <form method="POST" style="display:inline;">
-      <input type="hidden" name="action" value="stop">
-      <button type="submit">게임 종료 및 정산</button>
-    </form>
+<form method="POST" style="display:inline;">
+  <input type="hidden" name="action" value="stop_betting">
+  <button type="submit">배팅 종료</button>
+</form>
 
-    <form method="POST" style="display:inline; margin-left:12px;">
-      <input type="hidden" name="action" value="set_answer">
-      <select name="answer" required>
-        <option value="">정답 선택</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-      </select>
-      <button type="submit">정답 설정</button>
-    </form>
-  </div>
+<form method="POST" style="display:inline; margin-left:12px;">
+  <input type="hidden" name="action" value="set_answer">
+  <select name="answer" required>
+    <option value="">정답 선택</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+  </select>
+  <button type="submit">정답 설정</button>
+</form>
+
+<form method="POST" style="display:inline; margin-left:12px;">
+  <input type="hidden" name="action" value="settle">
+  <button type="submit">정산</button>
+</form>
+
 
   <div class="section">
     <h3>대기중인 배팅들 (현재 접수)</h3>
