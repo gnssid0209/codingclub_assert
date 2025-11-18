@@ -3,13 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>홈</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 100px; }
-        button, a {
+        body { 
+            font-family: sans-serif; 
+            text-align: center; 
+            padding: 50px 10px; 
+            background: #f9f9f9;
+        }
+        h1 { font-size: 24px; margin-bottom: 16px; }
+        p { font-size: 16px; margin-bottom: 20px; }
+        button {
             font-size: 18px;
-            padding: 10px 20px;
-            margin: 10px;
-            text-decoration: none;
+            padding: 12px 24px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            width: 200px;
+        }
+        button:hover { background-color: #45a049; }
+        a { text-decoration: none; display: block; }
+        a small {
+            font-size: 14px;
+            color: #333;
+            margin-top: 15px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 20px; }
+            p { font-size: 14px; }
+            button { font-size: 16px; padding: 10px 20px; width: 160px; }
+            a small { margin-top: 12px; }
         }
     </style>
 </head>
@@ -20,16 +48,16 @@
 
     {% if session.get('user') %}
         <p><strong>{{ session.user.name }}님 환영합니다!</strong></p>
-        <a href="/play"><button>게임하러 가기 ▶</button></a><br>
+        <a href="/play"><button>게임하러 가기 ▶</button></a>
         <a href="/logout"><button>로그아웃</button></a>
     {% else %}
-        <a href="/login"><button>로그인</button></a><br>
+        <a href="/login"><button>로그인</button></a>
         <a href="/admin_login"><small>관리자 페이지</small></a>
     {% endif %}
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-        <p style="color:red">{{ messages[0] }}</p>
+        <p style="color:red; margin-top:20px;">{{ messages[0] }}</p>
     {% endif %}
     {% endwith %}
 
