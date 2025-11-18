@@ -3,10 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <title>결과</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { 
+        font-family: sans-serif; 
+        text-align: center; 
+        padding: 40px 10px; 
+        background: #f9f9f9; 
+    }
+    .container { 
+        display: inline-block; 
+        padding: 20px; 
+        border: 1px solid #ddd; 
+        border-radius: 12px; 
+        background: #fff; 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 90%;
+    }
+    h2 { font-size: 20px; margin-bottom: 12px; }
+    p { font-size: 16px; margin: 8px 0; }
+    button { 
+        display: block;
+        margin: 12px auto; 
+        padding: 12px 20px; 
+        font-size: 16px; 
+        border: none; 
+        border-radius: 8px; 
+        background-color: #4CAF50; 
+        color: white; 
+        cursor: pointer; 
+        width: 100%;
+    }
+    button:hover { background-color: #45a049; }
+
+    /* 모바일 최적화 */
+    @media (max-width: 480px) {
+        h2 { font-size: 18px; }
+        p { font-size: 14px; }
+        .container { padding: 16px; }
+        button { font-size: 14px; padding: 10px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="container center">
+  <div class="container">
     <h2>{{ result }}</h2>
     <p>현재 보유 금액: {{ money }}G</p>
     <button onclick="window.location.href='/play'">다음 문제 풀기</button>
