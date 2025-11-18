@@ -208,46 +208,41 @@ def admin_login():
 # 관리자 페이지 + 동작: register / start / stop(정산) / set_answer
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    # 관리자만 접근 가능
     if not session.get("admin"):
         flash("관리자 비밀번호를 입력해주세요.")
         return redirect(url_for("admin_login"))
 
-    # load current game state, users and balances
     game = load_game()
     users = load_users()
-    data = load_data()  # 사용자별 머니 정보 (name -> money)
-
+    data = load_data()
+    
     if request.method == "POST":
-        # 어떤 동작인지 확인 (register / start / stop / set_answer / set_money)
         action = request.form.get("action")
 
         if action == "register":
             student_id = request.form.get("student_id")
             name = request.form.get("name")
             password = request.form.get("password")
-
-            # 저장 (users.json)
             users[student_id] = {"name": name, "password": password}
             save_users(users)
-
-            # 새로 등록하면 기본 100G 지급 (data.json)
-            # 기존에 금액이 있으면 덮어쓰지 않으려면 조건을 바꿀 수 있음.
-            data[name] = data.get(name, 100)  # 없으면 100, 있으면 기존 유지
+            data[name] = data.get(name, 100)
             save_data(data)
-
             flash(f"{name} 학생 계정이 등록되었습니다. 기본 100G 지급됨.")
             return redirect(url_for("admin"))
 
         elif action == "start":
             game["running"] = True
             save_game(game)
-            flash("게임을 시작했습니다. 이제 베팅이 가능합니다.")
+            flash("게임 시작! 학생들이 배팅할 수 있습니다.")
             return redirect(url_for("admin"))
 
-        elif action == "stop":
-            # 기존 stop(정산) 로직 유지 — 여기서는 기존 app.py의 stop 처리 그대로 사용하세요
-            # (아래는 기존 구현을 호출하거나 동일하게 복사)
+        elif action == "stop_betting":
+            game["running"] = False  # 더 이상 배팅 불가
+            save_game(game)
+            flash("배팅이 종료되었습니다. 학생은 더 이상 배팅할 수 없습니다.")
+            return redirect(url_for("admin"))
+
+        elif action == "settle":
             correct = game.get("answer")
             bets = game.get("bets", [])
             results = {}
@@ -259,36 +254,33 @@ def admin():
                 if name not in data:
                     data[name] = 0
                 if correct is None:
-                    # 정답 미설정시 환불 처리 (현재 정책)
                     data[name] += bet
-                    results[sid] = f"관리자가 정답을 설정하지 않았습니다. 배팅금 {bet}G가 환불되었습니다. (현재: {data[name]}G)"
+                    results[sid] = f"정답이 설정되지 않았습니다. 배팅금 {bet}G 환불. (현재: {data[name]}G)"
                 else:
                     if choice == correct:
                         payout = bet * 2
                         data[name] += payout
-                        results[sid] = f"정답! 선택 {choice} — 배팅 {bet}G → 지급 {payout}G (현재: {data[name]}G)"
+                        results[sid] = f"정답! {choice} 선택 → 지급 {payout}G (현재: {data[name]}G)"
                     else:
-                        results[sid] = f"오답. 선택 {choice} — 배팅 {bet}G를 잃었습니다. (현재: {data[name]}G)"
+                        results[sid] = f"오답. {choice} 선택 → 배팅 {bet}G 손실 (현재: {data[name]}G)"
             save_data(data)
             game["bets"] = []
             game["results"] = results
-            game["running"] = False
             save_game(game)
-            flash("게임을 종료하고 정산을 완료했습니다.")
+            flash("정산 완료!")
             return redirect(url_for("admin"))
 
         elif action == "set_answer":
             answer = request.form.get("answer")
-            if answer in ["A", "B", "C", "D"]:
+            if answer in ["A","B","C","D"]:
                 game["answer"] = answer
                 save_game(game)
-                flash(f"정답을 '{answer}'로 설정했습니다.")
+                flash(f"정답 '{answer}'로 설정됨.")
             else:
-                flash("올바른 정답(A/B/C/D)을 선택하세요.")
+                flash("정답을 올바르게 선택하세요.")
             return redirect(url_for("admin"))
 
         elif action == "set_money":
-            # 관리자: 특정 학생(학번)에게 금액 설정
             tgt_id = request.form.get("target_student_id")
             amount_str = request.form.get("amount")
             if not tgt_id or not amount_str:
@@ -297,24 +289,15 @@ def admin():
             try:
                 amount = int(amount_str)
             except ValueError:
-                flash("금액은 정수로 입력하세요.")
+                flash("금액은 정수만 가능합니다.")
                 return redirect(url_for("admin"))
-
-            users_local = load_users()
-            if tgt_id not in users_local:
-                flash("해당 학번의 학생이 없습니다.")
-                return redirect(url_for("admin"))
-            tgt_name = users_local[tgt_id]["name"]
+            tgt_name = users[tgt_id]["name"]
             data[tgt_name] = amount
             save_data(data)
-            flash(f"{tgt_name}({tgt_id})의 금액을 {amount}G로 설정했습니다.")
+            flash(f"{tgt_name}({tgt_id}) 금액 {amount}G로 설정됨.")
             return redirect(url_for("admin"))
 
-    # GET 렌더링: users, game, 그리고 각 학생의 보유금 표시를 템플릿으로 전달
-    # build a mapping student_id -> money
-    balances = {}
-    for sid, info in users.items():
-        balances[sid] = data.get(info["name"], 0)
+    balances = {sid:data.get(info["name"],0) for sid, info in users.items()}
 
     return render_template("admin.html", users=users, game=game, balances=balances)
 
