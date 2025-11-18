@@ -88,7 +88,7 @@
   </div>
 
   <div class="section">
-    <h3>학생 등록</h3>
+    <h3>학생 등록 (등록 시 기본 100G 지급)</h3>
     <form method="POST">
       <input type="hidden" name="action" value="register">
       <input name="student_id" placeholder="학번" required>
@@ -99,12 +99,34 @@
   </div>
 
   <div class="section">
-    <h3>등록된 학생 목록</h3>
-    <ul>
+    <h3>학생 목록 및 비밀번호 · 잔액</h3>
+    <table>
+      <tr><th>학번</th><th>이름</th><th>비밀번호</th><th>보유금</th></tr>
       {% for id, info in users.items() %}
-        <li>{{ id }} - {{ info.name }}</li>
+        <tr>
+          <td>{{ id }}</td>
+          <td>{{ info.name }}</td>
+          <td>{{ info.password }}</td>
+          <td>{{ balances.get(id, 0) }}G</td>
+        </tr>
       {% endfor %}
-    </ul>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>학생 금액 관리</h3>
+    <p>학번을 선택하고 금액을 입력하면 해당 학생의 보유금이 즉시 변경됩니다.</p>
+    <form method="POST">
+      <input type="hidden" name="action" value="set_money">
+      <select name="target_student_id" required>
+        <option value="">학생 선택</option>
+        {% for id, info in users.items() %}
+          <option value="{{ id }}">{{ id }} - {{ info.name }}</option>
+        {% endfor %}
+      </select>
+      <input name="amount" placeholder="설정할 금액(정수)" required>
+      <button type="submit">금액 설정</button>
+    </form>
   </div>
 
   {% with messages = get_flashed_messages() %}
