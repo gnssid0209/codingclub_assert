@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>결과 대기</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding-top: 80px; }
+    .box { display:inline-block; padding:20px; border:1px solid #ddd; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>결과를 기다리는 중입니다</h2>
+    <p>관리자가 게임을 종료하면 결과가 자동으로 표시됩니다.</p>
+    <p id="status">대기 중...</p>
+    <p id="money"></p>
+    <button onclick="location.href='{{ url_for('play') }}'">베팅 취소 / 돌아가기</button>
+  </div>
+
+  <script>
+    async function poll() {
+      const res = await fetch("{{ url_for('bet_status') }}");
+      const j = await res.json();
+      if (j.resolved) {
+        document.getElementById('status').textContent = j.message;
+        document.getElementById('money').textContent = `현재 잔액: ${j.money}G`;
+        // 정산되면 자동으로 result 페이지로 이동(선택). 여기서는 정보만 표시.
+        return;
+      } else {
+        // 아직 정산 전이라면 2초 후 재시도
+        setTimeout(poll, 2000);
+      }
+    }
+    poll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>경마게임</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .bet-input { width: 140px; padding: 8px; font-size: 16px; margin-top: 8px; }
+    .small { font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>경마게임</h2>
+    <p>말을 선택해주세요.</p>
+
+    <h2>🎮 {{ user.name }}님 환영합니다!</h2>
+    <p>학번: {{ user.id }}</p>
+
+    <!-- 현재 보유 금액 -->
+    <p class="small">현재 보유 금액: <strong id="current-money">{{ money }}</strong>G</p>
+
+    <a href="{{ url_for('logout') }}">로그아웃</a>
+
+    {% if not game_running %}
+      <p style="color: red; font-weight:bold;">관리자가 아직 게임을 시작하지 않았습니다. 시작할 때까지 대기해주세요.</p>
+    {% endif %}
+
+    <!-- 선택 + 배팅 폼: 게임이 시작되었을 때만 활성화 -->
+    <form action="{{ url_for('check_answer') }}" method="post" class="choices" onsubmit="return validateBet()">
+      <div>
+        <label for="bet">배팅금 (정수): </label>
+        <input id="bet" name="bet" type="number" min="1" step="1" class="bet-input" required {% if not game_running %}disabled{% endif %}>
+        <span class="small"> (최대: <span id="max-money">{{ money }}</span>G)</span>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button name="answer" value="A" type="submit" {% if not game_running %}disabled{% endif %}>1번말</button>
+        <button name="answer" value="B" type="submit" {% if not game_running %}disabled{% endif %}>2번말</button>
+        <button name="answer" value="C" type="submit" {% if not game_running %}disabled{% endif %}>3번말</button>
+        <button name="answer" value="D" type="submit" {% if not game_running %}disabled{% endif %}>4번말</button>
+      </div>
+    </form>
+
+    <p class="small" style="margin-top:10px;">(관리자가 게임을 시작하면 배팅이 열리고, 관리자가 종료하면 결과가 발표됩니다)</p>
+  </div>
+
+  <script>
+    const currentMoney = parseInt(document.getElementById('current-money').textContent) || 0;
+    const betInput = document.getElementById('bet');
+    const maxMoneySpan = document.getElementById('max-money');
+    if (maxMoneySpan) maxMoneySpan.textContent = currentMoney;
+
+    if (betInput) {
+      if (currentMoney <= 0) {
+        betInput.value = 0;
+        betInput.setAttribute('min', 0);
+        betInput.setAttribute('readonly', true);
+        betInput.placeholder = "보유금 부족";
+      } else {
+        betInput.setAttribute('max', currentMoney);
+        betInput.value = 1;
+      }
+    }
+
+    function validateBet() {
+      // 클라이언트 측 검사
+      const betVal = parseInt(betInput.value);
+      if (isNaN(betVal) || betVal <= 0) {
+        alert("배팅 금액은 1 이상의 정수여야 합니다.");
+        return false;
+      }
+      if (betVal > currentMoney) {
+        alert("배팅 금액이 보유금보다 큽니다.");
+        return false;
+      }
+      return true;
+    }
+  </script>
+</body>
+</html>

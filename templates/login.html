@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    input { margin: 5px; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h2>🎮 학생 로그인</h2>
+  <form method="POST">
+    <input name="student_id" placeholder="학번" required><br>
+    <input name="name" placeholder="이름" required><br>
+    <input name="password" type="password" placeholder="비밀번호" required><br>
+    <button type="submit">로그인</button>
+  </form>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <p style="color: red;">{{ messages[0] }}</p>
+  {% endif %}
+  {% endwith %}
+</body>
+</html>

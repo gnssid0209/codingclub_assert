@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 로그인</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    input { padding: 10px; margin: 10px; font-size: 16px; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>🔐 관리자 로그인</h2>
+  <form method="POST">
+    <input type="password" name="password" placeholder="관리자 비밀번호 입력" required><br>
+    <button type="submit">로그인</button>
+  </form>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <p style="color:red;">{{ messages[0] }}</p>
+  {% endif %}
+  {% endwith %}
+
+  <button onclick="window.location.href='/'">홈으로 돌아가기</button>
+</body>
+</html>

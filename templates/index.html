@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>홈</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 100px; }
+        button, a {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 학교 전시용 게임 시스템</h1>
+    <p>로그인 후 게임을 플레이할 수 있습니다.</p>
+
+    {% if session.get('user') %}
+        <p><strong>{{ session.user.name }}님 환영합니다!</strong></p>
+        <a href="/play"><button>게임하러 가기 ▶</button></a><br>
+        <a href="/logout"><button>로그아웃</button></a>
+    {% else %}
+        <a href="/login"><button>로그인</button></a><br>
+        <a href="/admin_login"><small>관리자 페이지</small></a>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <p style="color:red">{{ messages[0] }}</p>
+    {% endif %}
+    {% endwith %}
+
+</body>
+</html>

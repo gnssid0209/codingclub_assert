@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>랭킹</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>🏆 랭킹</h2>
+    <table>
+      <tr>
+        <th>학번</th>
+        <th>이름</th>
+        <th>게임머니</th>
+      </tr>
+      {% for student_id, name, money in ranking %}
+      <tr>
+        <td>{{ student_id }}</td>
+        <td>{{ name }}</td>
+        <td>{{ money }}G</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <p class="highlight">
+      내 학번: {{ my_id }} / 내 이름: {{ my_name }} / 내 보유 금액: {{ my_money }}G
+    </p>
+
+    <button onclick="window.location.href='/'">홈으로 돌아가기</button>
+  </div>
+</body>
+</html>
